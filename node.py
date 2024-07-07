@@ -11,6 +11,7 @@ def replace_domain2ip(link: str, ipv4=True, ipv6=True) -> list[str]:
         padded_encoded_string = base64_string + "=" * ((4 - len(base64_string) % 4) % 4)
         decoded_string = base64.b64decode(padded_encoded_string).decode("utf-8")
         json_data = json.loads(decoded_string)
+        # print("json_data = " + str(json_data))
     except Exception as e:
         return [link]
 
@@ -35,8 +36,9 @@ def replace_domain2ip(link: str, ipv4=True, ipv6=True) -> list[str]:
     for i, ip in enumerate(ips):
         new_json_data = copy.copy(json_data)
         new_json_data["add"] = ip
-        new_json_data["ps"] = new_json_data["ps"] + str(i)
+        new_json_data["ps"] = new_json_data["ps"] + str(i + 1)
         new_string = json.dumps(new_json_data)
+        # print("new_string = " + str(new_string))
         new_base64_string = base64.b64encode(new_string.encode("utf-8")).decode("utf-8")
         output_string = "{}://{}".format(protol, new_base64_string)
         # print("output str = " + str(output_string))
