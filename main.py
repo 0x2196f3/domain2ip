@@ -12,12 +12,23 @@ PORT = 8000
 class ProxyHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         path = self.path[1:]
+        print(path)
+        ipv4 = True
+        ipv6 = True
+
+        # Extract query arguments
+        query_args = urllib.parse.parse_qs(self.path.split('?')[1]) if '?' in self.path else {}
+        if 'ipv4' in query_args:
+            ipv4 = query_args['ipv4'][0].lower() == 'true'
+        if 'ipv6' in query_args:
+            ipv6 = query_args['ipv6'][0].lower() == 'true'
+
         if path.startswith("http"):
             links = server.get_links(path)
             new_links = []
             for link in links:
                 # print(link)
-                new_links += node.replace_domain2ip(link)
+                new_links += node.replace_domain2ip(link, ipv4, ipv6)
                 # print(new_links)
 
             new_url = server.build_url(path, new_links)
@@ -30,9 +41,9 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
                 self.wfile.write(response.read())
         else:
             link = path
-            new_links = node.replace_domain2ip(link)
+            new_links = node.replace_domain2ip(link, ipv4, ipv6)
             response = "\n".join(new_links)
-            print(response)
+            # print(response)
             self.send_response(200)
             self.send_header('Content-Type', 'text/plain')
             self.end_headers()
