@@ -11,13 +11,13 @@ PORT = 8000
 
 class ProxyHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
-        path = self.path[1:]
+        path, query = self.path[1:].split('?')
         print(path)
         ipv4 = True
         ipv6 = True
 
         # Extract query arguments
-        query_args = urllib.parse.parse_qs(self.path.split('?')[1]) if '?' in self.path else {}
+        query_args = urllib.parse.parse_qs(query)
         if 'ipv4' in query_args:
             ipv4 = query_args['ipv4'][0].lower() == 'true'
         if 'ipv6' in query_args:
