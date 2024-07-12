@@ -1,3 +1,5 @@
+import socket
+
 domains_on_cloudflare = [
     "cloudflare.com",
     "4chan.org",
@@ -50,3 +52,23 @@ domains_on_cloudflare = [
     "wto.org",
     "zsu.gov.ua",
 ]
+
+
+def tcp_ping(domain):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(1)  # 1 second timeout
+        result = sock.connect_ex((domain, 80))  # try to connect to port 80
+        if result == 0:
+            print(f"{domain}: UP")
+        else:
+            print(f"{domain}: DOWN")
+    except socket.gaierror:
+        print(f"{domain}: DNS resolution failed")
+    except socket.error:
+        print(f"{domain}: Connection failed")
+
+
+if __name__ == "__main__":
+    for domain in domains_on_cloudflare:
+        tcp_ping(domain)
