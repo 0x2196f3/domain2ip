@@ -1,4 +1,5 @@
 import socket
+from urllib.request import urlopen
 
 domains_on_cloudflare = [
     "cloudflare.com",
@@ -53,6 +54,14 @@ domains_on_cloudflare = [
     "zsu.gov.ua",
 ]
 
+
+def download_page(url):
+    response = urlopen(url)
+    if response.getcode() == 200:
+        return response.read().decode('utf-8')
+    return None
+
+
 def get_ip_address(domain):
     try:
         ip_address = socket.gethostbyname(domain)
@@ -81,6 +90,10 @@ def tcp_ping(domain):
             print(f"Connection to {domain} successful!")
         else:
             print(f"Connection to {domain} failed.")
+        if download_page(url):
+            print(f"download {domain} successful!")
+        else:
+            print(f"faild to download {domain}".)
     else:
         print(f"Could not resolve the IP address for {domain}")
 
