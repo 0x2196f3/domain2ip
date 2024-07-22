@@ -86,5 +86,6 @@ def tcp_ping(domain):
 
 
 if __name__ == "__main__":
+    tcp_ping("www.baidu.com")
     for domain in domains_on_cloudflare:
         tcp_ping(domain)
