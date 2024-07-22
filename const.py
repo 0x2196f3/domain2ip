@@ -53,20 +53,36 @@ domains_on_cloudflare = [
     "zsu.gov.ua",
 ]
 
+def get_ip_address(domain):
+    try:
+        ip_address = socket.gethostbyname(domain)
+        return ip_address
+    except socket.gaierror:
+        return None
+
+def test_connection(domain):
+    ip_address = get_ip_address(domain)
+    if ip_address:
+        try:
+            socket.create_connection((ip_address, 80), timeout=5)
+            return True
+        except socket.error:
+            return False
+    else:
+        return False
+
+
 
 def tcp_ping(domain):
-    try:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(1)  # 1 second timeout
-        result = sock.connect_ex((domain, 80))  # try to connect to port 80
-        if result == 0:
-            print(f"{domain}: UP")
+    ip_address = get_ip_address(domain)
+    if ip_address:
+        print(f"The IP address of {domain} is: {ip_address}")
+        if test_connection(domain):
+            print(f"Connection to {domain} successful!")
         else:
-            print(f"{domain}: DOWN")
-    except socket.gaierror:
-        print(f"{domain}: DNS resolution failed")
-    except socket.error:
-        print(f"{domain}: Connection failed")
+            print(f"Connection to {domain} failed.")
+    else:
+        print(f"Could not resolve the IP address for {domain}")
 
 
 if __name__ == "__main__":
