@@ -17,6 +17,14 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         else:
             path = self.path[1:]
         print(path)
+
+        if path.strip() == "":
+            response = "Server Running"
+            # print(response)
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/plain')
+            self.end_headers()
+            self.wfile.write(response.encode())
         ipv4 = True
         ipv6 = True
 
