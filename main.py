@@ -25,6 +25,7 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'text/plain')
             self.end_headers()
             self.wfile.write(response.encode())
+            return
         ipv4 = True
         ipv6 = True
 
